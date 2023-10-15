@@ -2,10 +2,10 @@ import os
 import random
 import cv2
 import pandas as pd
-import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
+from my_knn import My_KNN
+
 
 # Путь к данным
 data_path = 'C:\\Users\\Admin\\PycharmProjects\\sii5\\archive'
@@ -61,21 +61,25 @@ for class_name in class_names:
         if features is not None:
             random_features.append(features)
             random_labels.append(class_name)
+
+
 # Разделение данных на тренировочный и тестовый наборы
 X_train, X_test, y_train, y_test = train_test_split(random_features, random_labels, test_size=0.2, random_state=42)
 
 # Обучение KNN классификатора
-k = 5  # Количество соседей
-knn = KNeighborsClassifier(n_neighbors=k)
-knn.fit(X_train, y_train)
+
+
+my_knn = My_KNN(k = 5)
+my_knn.fit(X_train, y_train)
 
 # Тестирование классификатора
-y_pred = knn.predict(X_test)
 
+y_pred_my = my_knn.predict(X_test)
 # Оценка производительности
-accuracy = accuracy_score(y_test, y_pred)
-print(f'Точность классификации: {accuracy * 100:.2f}%')
 
+acc = accuracy_score(y_test, y_pred_my)
+
+print(f'Точность классификации: {acc * 100:.2f}%')
 
 
 
