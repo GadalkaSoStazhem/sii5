@@ -1,18 +1,20 @@
-import os
-import random
-import cv2
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-from my_knn import My_KNN
 from preps import *
-from features import *
-
+from features import features_choice, show_corr_matrix
+from model_work import *
 df = pd.read_csv("diabetes.csv")
 
 nan_check(df)
-cat_features(df)
-define_distrib(df)
-show_corr_marix(df)
+checked_df = cat_features(df)
+#define_distrib(checked_df)
+#show_corr_matrix(df)
+X = df.drop('Outcome', axis=1)
+y = df['Outcome']
+X_rand, X_nrand = features_choice(X)
+print("Рандомный результат:")
+knn_result(X_rand, y)
+print("\nНе рандомный результат:")
+knn_result(X_nrand, y)
+
+
 
 

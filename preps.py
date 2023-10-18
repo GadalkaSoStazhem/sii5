@@ -1,23 +1,8 @@
 import pandas as pd
+import numpy as np
+import random
 import matplotlib.pyplot as plt
 from characteristics import mean_vals, st_deviation
-class LabelEncoder:
-    def __init__(self):
-        self.label_map = {}
-        self.inverse_label_map = {}
-
-    def fit(self, labels):
-        unique_labels = set(labels)
-        for i, label in enumerate(unique_labels):
-            self.label_map[label] = i
-            self.inverse_label_map[i] = label
-
-    def transform(self, labels):
-        return [self.label_map[label] for label in labels]
-
-    def inverse_transform(self, encoded_labels):
-        return [self.inverse_label_map[label] for label in encoded_labels]
-
 
 def nan_check(df):
     missed = df.isna().sum().sum()
@@ -66,15 +51,38 @@ def std_scaler(df):
     #используется для нормального и геометрического распределения
     for col in df.columns:
         if df[col].name != 'Outcome':
-            df[col] = (df[col] - means[cnt]) / devs[cnt]
+            df.loc[:, col] = (df[col] - means[cnt]) / devs[cnt]
         cnt += 1
 
 def min_max_scaler(df):
     #используется для равномерного распределения
-    for col in df.columns:
-        if df[col].name == 'Outcome':
-            min_val = df[col].min()
-            max_val = df[col].max()
-            df[col] = (df[col] - min_val) / (max_val - min_val)
+    min_val = df.min()
+    max_val = df.max()
+    df = (df - min_val)/(max_val - min_val)
 
+
+def splitter (X, y, test_size, random_state):
+    rows = X.shape[0]
+    ids = np.array(range(rows))
+    random.seed(random_state)
+    random.shuffle(ids)
+
+    test = round(rows * test_size)
+
+    test_ids = ids[0:test]
+    tr_ids = ids[test:rows]
+
+    X_train = pd.DataFrame(X.values[tr_ids, :], columns=X.columns)
+    X_test = pd.DataFrame(X.values[test_ids, :], columns=X.columns)
+    y_train = pd.DataFrame(y.values[tr_ids], columns=['Performance Index'])
+    y_test = pd.DataFrame(y.values[test_ids], columns=['Performance Index'])
+    return X_train, X_test, y_train, y_test
+
+def prep_data(X, y):
+    min_max_scaler(y)
+    std_scaler(X)
+    X_train, X_test, y_train, y_test = splitter(X, y,0.3, 42)
+
+
+    return X_train, X_test, y_train, y_test
 
