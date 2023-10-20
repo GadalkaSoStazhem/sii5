@@ -74,15 +74,13 @@ def splitter (X, y, test_size, random_state):
 
     X_train = pd.DataFrame(X.values[tr_ids, :], columns=X.columns)
     X_test = pd.DataFrame(X.values[test_ids, :], columns=X.columns)
-    y_train = pd.DataFrame(y.values[tr_ids], columns=['Performance Index'])
-    y_test = pd.DataFrame(y.values[test_ids], columns=['Performance Index'])
+    y_train = pd.DataFrame(y.values[tr_ids], columns=['Outcome'])
+    y_test = pd.DataFrame(y.values[test_ids], columns=['Outcome'])
     return X_train, X_test, y_train, y_test
 
 def prep_data(X, y):
     min_max_scaler(y)
     std_scaler(X)
     X_train, X_test, y_train, y_test = splitter(X, y,0.3, 42)
-
-
     return X_train, X_test, y_train, y_test
 
